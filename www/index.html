@@ -28,6 +28,11 @@
   .btn { width: 68px; height: 68px; border-radius: 50%; border: 2px solid rgba(255,255,255,.55); background: rgba(15,15,25,.5); color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 800; font-size: 15px; touch-action: none; }
   #move .btn { width: 76px; height: 76px; font-size: 20px; }
   .btn small { font-size: 10px; opacity: .8; font-weight: 600; }
+  .btn.hint { animation: hint .7s infinite; box-shadow: 0 0 0 4px #ffd34d; }
+  @keyframes hint { 50% { transform: scale(1.12); box-shadow: 0 0 0 9px rgba(255,211,77,.35); } }
+  #replay { position: fixed; inset: 0; display: none; flex-direction: column; justify-content: space-between; align-items: center; padding: 64px 0 34px; z-index: 9; border-top: 26px solid #000; border-bottom: 26px solid #000; box-shadow: inset 0 0 140px rgba(0,0,0,.65); }
+  #replay b { font-size: 22px; letter-spacing: 6px; color: #ffd34d; text-shadow: 0 2px 8px #000; }
+  #replay span { font-size: 13px; opacity: .85; text-shadow: 0 1px 4px #000; }
   .btn.on { background: rgba(255,255,255,.35); transform: scale(.94); }
   .men { border-color: #ff6b6b; } .kote { border-color: #ffd34d; } .do { border-color: #6bd3ff; } .tsuki { border-color: #c38bff; } .seme { border-color: #7ddc7d; } .guard { border-color: #aaa; font-size: 12px; }
   #menu { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; background: radial-gradient(circle at center, rgba(40,28,18,.9), rgba(0,0,0,.96)); z-index: 10; padding: 16px; text-align: center; overflow-y: auto; }
@@ -77,6 +82,7 @@
 <div id="kiai"><div class="kb"><i id="kS"></i></div>気 KI<div class="kb r"><i id="kA"></i></div></div>
 <div id="msg"></div>
 <div id="sub"></div>
+<div id="replay" onclick="game.endReplay()"><b>▶ REPLAY</b><span>Ralenti ×0,4 — touchez l'écran pour passer</span></div>
 <div class="controls" id="move">
   <div class="btn" data-k="back">◀</div>
   <div class="btn" data-k="fwd">▶</div>
@@ -91,7 +97,7 @@
 </div>
 
 <div id="menu">
-  <h1>KENDO SHIAI<small>剣道 試合 — v3</small></h1>
+  <h1>KENDO SHIAI<small>剣道 試合 — Combat libre</small></h1>
   <p>Vous êtes <b>Shiro</b> (blanc). Premier à 2 ippons, 3 minutes. Il faut 2 drapeaux sur 3 pour un point.</p>
   <ul>
     <li><b>◀ ▶</b> gérer la distance (maai)</li>
@@ -261,10 +267,11 @@ class Fighter {
   }
   get busy() { return !!this.action; }
   get striking() { return !!this.action && this.action.kind === 'strike'; }
-  strike(type) {
+  strike(type, opts) {
     if (game.state !== 'fight') return false;
     const a = this.action;
     if (a) {
+      if (opts && a.opts && a.t >= .45) { this.action = { kind: 'strike', type, t: 0, from: { ...this.pose }, opts }; return true; }
       // renzoku-waza : enchaîner une 2e frappe juste après l'impact de la 1re
       if (a.kind === 'strike' && !a.chained && a.t >= .30 && a.t < .62 && type !== a.type) {
         this.action = { kind: 'strike', type, t: .06, from: { ...this.pose }, combo: a.type, prevFail: !!a.fail, chained: true, hiki: false };
@@ -272,7 +279,7 @@ class Fighter {
       }
       return false;
     }
-    this.action = { kind: 'strike', type, t: 0, from: { ...this.pose }, hiki: game.tsuba, combo: null };
+    this.action = { kind: 'strike', type, t: 0, from: { ...this.pose }, hiki: game.tsuba && !opts, combo: null, opts, harai: !opts && type === 'men' && (game.clock || 0) - (this.semeEnd || -9) < .45 };
     this.guarding = false; return true;
   }
   seme() {
@@ -293,9 +300,9 @@ class Fighter {
       if (t < .3) this.x += this.dir * dt * 150;
       this.lean = t < .3 ? 3 : 0;
       if (t >= .1 && !a.done) { a.done = true; game.onSeme(this); }
-      if (t >= .45) this.action = null;
+      if (t >= .45) { this.action = null; this.semeEnd = game.clock || 0; }
     } else if (a) {
-      a.t += dt; const t = a.t;
+      a.t += dt * (a.opts && a.opts.speed || 1); const t = a.t;
       const up = a.type === 'do' ? P.furiDo : a.type === 'tsuki' ? P.prepTsu : P.furi, end = P[a.type];
       if (t < .16) p = mixP(a.from, up, ease(t / .16));
       else if (t < .30) p = mixP(up, end, ease((t - .16) / .14));
@@ -303,13 +310,13 @@ class Fighter {
       else if (t < .95) p = mixP(end, P.chudan, ease((t - .62) / .33));
       if (t >= .16 && t < .32) {
         // fumikomi : en avant, ou en arrière pour un hiki-waza, plus court pour un enchaînement
-        const speed = a.hiki ? -690 : a.chained ? 300 : 1060;
+        const speed = a.opts ? (a.opts.lunge || 0) / .16 : a.hiki ? -690 : a.chained ? 300 : 1060;
         this.x += this.dir * dt * speed;
         this.lean = a.hiki ? -4 : 6;
         if (!a.stomp) { a.stomp = true; sfx.kiai(this.aka, a.type); }
       } else if (t >= .32 && t < .62) this.lean = a.hiki ? -2 : 3;
       this.trailOn = t >= .18 && t < .34;
-      if (t >= .30 && !a.hit) { a.hit = true; sfx.stomp(); game.resolveHit(this, a); }
+      if (t >= .30 && !a.hit) { a.hit = true; sfx.stomp(); if (a.opts) { if (window.hooks && hooks.nores) hooks.nores(this, a); } else if (!a.cancel) game.resolveHit(this, a); }
       if (t >= .95) { this.action = null; this.trailOn = false; }
     }
     if (this.recoil > 0) { this.recoil = Math.max(0, this.recoil - dt * 2.2); p = mixP(p, P.recoil, Math.sin(this.recoil * Math.PI) * .8); }
@@ -321,7 +328,7 @@ class Fighter {
     const moving = Math.abs(this.vel) > 1;
     const bob = Math.sin(now / 280 + this.bobPhase) * 2.5 + (moving ? Math.abs(Math.sin(now / 90)) * -4 : 0);
     v.root.setAttribute('transform', `translate(${this.x},${GROUND})`);
-    v.body.setAttribute('transform', `translate(0,${bob * .3}) rotate(${this.lean},0,-20)`);
+    v.body.setAttribute('transform', `translate(0,${bob * .3 + (this.crouch || 0)}) rotate(${this.lean + (this.bow || 0)},0,-20)`);
     v.aura.setAttribute('opacity', clamp((this.kiai - 60) / 40, 0, 1) * (.6 + .4 * Math.sin(now / 150)));
     const sh = [2, -256 + bob], r = p.a * Math.PI / 180;
     const hx = p.x, hy = p.y + bob, lx = hx - Math.cos(r) * 54, ly = hy - Math.sin(r) * 54;
@@ -383,6 +390,7 @@ const sfx = (() => {
 
 // ================= EFFETS =================
 function spark(x, y, big) {
+  if (game.state !== 'replay' && rec.length) rec[rec.length - 1].fx.push([x, y, big]);
   const g = el('g', { transform: `translate(${x},${y})` }, fx);
   el('circle', { r: big ? 46 : 26, fill: 'url(#spark)' }, g);
   for (let i = 0; i < (big ? 8 : 4); i++) { const a = i / (big ? 8 : 4) * Math.PI * 2; el('line', { x1: Math.cos(a) * 14, y1: Math.sin(a) * 14, x2: Math.cos(a) * (big ? 52 : 30), y2: Math.sin(a) * (big ? 52 : 30), stroke: '#fff8d8', 'stroke-width': 4, 'stroke-linecap': 'round' }, g); }
@@ -409,6 +417,22 @@ const player = new Fighter(false), ai = new Fighter(true);
 const other = f => f === player ? ai : player;
 const who = f => f === player ? 'vous' : 'l\'IA';
 
+// ================= REPLAY =================
+const rec = []; let recTotal = 0;
+const snap = f => ({ x: f.x, pose: { ...f.pose }, lean: f.lean, vel: f.vel, kiai: f.kiai, trailOn: !!f.trailOn, busy: !!f.action });
+function recordFrame(dt) { rec.push({ dt, p: snap(player), a: snap(ai), flags: refs.map(r => [r.white.v, r.red.v]), cam, fx: [] }); recTotal++; if (rec.length > 400) rec.shift(); }
+function applySnap(f, s) { f.x = s.x; f.pose = s.pose; f.lean = s.lean; f.vel = s.vel; f.kiai = s.kiai; f.trailOn = s.trailOn; f.action = s.busy ? { kind: 'replay' } : null; }
+function replayFrame(dt, now) {
+  const r = game.rp; r.t += dt * .4;
+  while (r.i < r.frames.length - 1 && r.acc + r.frames[r.i].dt <= r.t) { r.acc += r.frames[r.i].dt; r.i++; for (const s of r.frames[r.i].fx) spark(s[0], s[1], s[2]); }
+  const fr = r.frames[r.i];
+  applySnap(player, fr.p); applySnap(ai, fr.a);
+  player.draw(now); ai.draw(now);
+  refs.forEach((rf, k) => { for (const [f, v] of [[rf.white, fr.flags[k][0]], [rf.red, fr.flags[k][1]]]) f.g.setAttribute('transform', `translate(${f.side * 22},-170) rotate(${-f.side * v * 150})`); });
+  world.setAttribute('transform', `translate(${-fr.cam},0)`); far.setAttribute('transform', `translate(${-fr.cam * .35},0)`);
+  if (r.i >= r.frames.length - 1) game.endReplay();
+}
+
 const game = {
   state: 'menu', level: 1, time: 180, score: { s: [], a: [] }, pauseT: 0, next: null,
   tsuba: false, tsubaClock: 0, tsubaTime: 0, z: null,
@@ -419,7 +443,7 @@ const game = {
     flagsDown(); aiBrain.timer = .9; aiBrain.sepT = 0;
   },
   start() {
-    this.time = 180; this.score = { s: [], a: [] }; player.hansoku = ai.hansoku = 0; updateScore(); this.reset();
+    this.time = 180; this.rpFrom = null; this.score = { s: [], a: [] }; player.hansoku = ai.hansoku = 0; updateScore(); this.reset();
     this.state = 'pause'; showMsg('HAJIME !', 'Début du combat'); this.pauseT = 1.2; this.next = 'fight';
   },
   onSeme(f) {
@@ -435,27 +459,39 @@ const game = {
     const [tx, ty] = att.tip();
     const fail = (sound, text) => { a.fail = true; if (sound) { sfx.clack(); spark(tx, ty, false); } if (text) showMsg('', text, .9); };
     if (d > IDEAL + 120) return fail(false, isP ? 'Trop loin — rapprochez-vous' : '');
-    if (d < IDEAL - 110) return fail(true, isP ? 'Trop près' : '');
-    if (def.guardT > .55 && (type === 'men' || type === 'kote')) { att.kiai = Math.max(0, att.kiai - 15); return fail(true, isP ? 'Bloqué par l\'adversaire' : 'Bien bloqué !'); }
-    if (def.striking && def.action.t > .2 && def.action.t < .34) return fail(true, 'Ai-uchi — frappes simultanées');
+    const kaeshi = type === 'do' && (game.clock || 0) - (att.blockedAt || -9) < .7;
+    if (d < IDEAL - 110 && !a.counterOf && !kaeshi) return fail(true, isP ? 'Trop près' : '');
+    if (def.guardT > .55 && !a.harai && (type === 'men' || type === 'kote')) { def.blockedAt = game.clock || 0; att.kiai = Math.max(0, att.kiai - 15); return fail(true, isP ? 'Bloqué par l\'adversaire' : 'Bien bloqué !'); }
+    // ōji-waza : l'adversaire répond pendant notre attaque, au bon moment
+    const ct = def.striking && !def.action.opts ? def.action.type : null;
+    if (ct && !def.action.hit && def.action.t > .04 && def.action.t < (ct === 'kote' ? .3 : .24) && ((type === 'men' && ct !== 'tsuki') || (type === 'kote' && ct === 'men'))) {
+      def.action.counterOf = type; def.action.counterT = def.action.t; return fail(true, isP ? 'Votre attaque a été contrée !' : 'Contre-attaque réussie…');
+    }
+    if (!a.counterOf && def.striking && def.action.t > .2 && def.action.t < .34) return fail(true, 'Ai-uchi — frappes simultanées');
     sfx.pop(); spark(tx, ty, true); def.recoil = 1;
-    let q = 1 - Math.abs(d - IDEAL) / 120;
+    const OJI = { 'men>do': 'nuki-dō', 'men>men': 'suriage-men', 'men>kote': 'debana-kote', 'kote>men': 'kote-nuki-men' };
+    let oji = a.counterOf ? (a.counterOf === 'men' && type === 'men' ? (a.counterT >= .16 ? 'debana-men' : 'suriage-men') : OJI[`${a.counterOf}>${type}`] || 'ōji-waza') : '';
+    if (!oji && kaeshi) oji = 'kaeshi-dō';
+    if (!oji && def.striking && def.action.t < .16 && (type === 'men' || type === 'kote')) oji = `debana-${type}`;
+    let q = a.counterOf || kaeshi ? .85 : 1 - Math.abs(d - IDEAL) / 120;
     const raised = def.guardT > .4 || (def.striking && def.action.t < .2);
-    if (type === 'do') q += raised ? .25 : -.35;                          // le dō marche quand l'adversaire lève les bras
+    if (type === 'do' && !oji) q += raised ? .25 : -.35;                          // le dō marche quand l'adversaire lève les bras
     if (type === 'kote' && def.striking && def.action.t < .16) q += .3;   // debana-kote
     if (type === 'tsuki') q += def.openT > 0 ? .1 : -.15;                 // le tsuki est difficile sans ouverture
     if (def.openT > 0) q += .25;                                          // ouverture créée par le seme
     if (a.combo && a.prevFail) q += .15;                                  // la 1re frappe a fait bouger la garde
     if (a.hiki) q -= .05;
+    if (oji) q += .3;
+    if (a.harai) q += .2;
     q += (att.kiai - 50) / 250;                                           // ki-ken-tai-ichi
     if (!isP) q -= LEVELS[this.level].sloppy * Math.random();
     att.kiai *= .45;
     let flags = 0;
     refs.forEach(r => { if (q + (Math.random() * .4 - .2) > .42) { flags++; (isP ? r.white : r.red).goal = 1; } });
-    const name = (a.hiki ? 'hiki-' : '') + (a.combo ? `${a.combo}-${type}` : type);
+    const name = oji || (a.harai ? 'harai-men' : (a.hiki ? 'hiki-' : '') + (a.combo ? `${a.combo}-${type}` : type));
     if (flags >= 2) {
       // drapeaux levés, mais le point n'est confirmé qu'avec le zanshin
-      this.state = 'zanshin'; this.z = { att, type, flags, name, t: 0, ok: false };
+      this.state = 'zanshin'; this.z = { att, type, flags, name, t: 0, ok: false, rec: recTotal };
       showMsg(`${LABEL[type]} ARI ?`, isP ? 'ZANSHIN ! Appuyez sur ◀ ou GARDE' : `${name.toUpperCase()} de l'IA…`, 1.1);
       if (isP) $('sub').classList.add('hot');
     } else {
@@ -470,6 +506,7 @@ const game = {
     const won = this.score.s.length >= 2 || this.score.a.length >= 2;
     showMsg(`${LABEL[type]} ARI !`, `${isP ? 'Ippon pour vous' : 'Ippon pour l\'IA'} — ${name} · ${flags} drapeaux`, 1.9);
     this.state = 'pause'; this.pauseT = 2.3; this.next = won ? 'end' : 'restart';
+    this.rpFrom = this.z.rec;
   },
   hansoku(f) {
     if (this.state !== 'fight') return;
@@ -486,6 +523,19 @@ const game = {
       showMsg('HANSOKU ICHIKAI', `Jōgai — ${f === player ? 'vous êtes sorti' : 'l\'IA est sortie'} du terrain (1er avertissement)`, 1.8);
       this.state = 'pause'; this.pauseT = 2; this.next = 'resume';
     }
+  },
+  startReplay() {
+    const id = this.rpFrom; this.rpFrom = null;
+    const i = id - (recTotal - rec.length);
+    const frames = rec.slice(Math.max(0, i - 70), Math.min(rec.length, i + 30));
+    if (frames.length < 10) return;
+    this.rp = { frames, i: 0, t: 0, acc: 0, saved: [snap(player), snap(ai)] };
+    this.state = 'replay'; $('replay').style.display = 'flex'; $('msg').style.opacity = 0; $('sub').style.opacity = 0;
+  },
+  endReplay() {
+    if (this.state !== 'replay') return;
+    applySnap(player, this.rp.saved[0]); applySnap(ai, this.rp.saved[1]); player.action = ai.action = null;
+    $('replay').style.display = 'none'; this.state = 'pause'; this.pauseT = .5;
   },
   wakare() {
     sfx.whistle(); showMsg('WAKARE !', 'Séparation — reprise à distance', 1.2);
@@ -513,6 +563,7 @@ const game = {
       }
     } else if (this.state === 'pause') {
       this.pauseT -= dt;
+      if (this.rpFrom != null && this.pauseT < 1.1) { this.startReplay(); return; }
       if (this.pauseT <= 0) {
         if (this.next === 'fight') this.state = 'fight';
         else if (this.next === 'resume') { this.reset(); showMsg('HAJIME !', 'Reprise'); this.pauseT = 1; this.next = 'fight'; }
@@ -525,6 +576,7 @@ const game = {
   },
   finish() {
     this.state = 'over';
+    if (window.hooks && hooks.finish && hooks.finish()) return;
     const s = this.score.s.length, a = this.score.a.length;
     showMsg(s === a ? 'HIKIWAKE' : 'SHŌBU ARI', s > a ? 'Vous gagnez !' : a > s ? 'L\'IA gagne' : 'Match nul', 3);
     setTimeout(() => {
@@ -603,6 +655,8 @@ const aiBrain = {
 // ================= COMMANDES =================
 const keys = { fwd: false, back: false, guard: false };
 function press(k, on) {
+  if (game.state === 'replay') { if (on) game.endReplay(); return; }
+  if (on && window.hooks && hooks.press && hooks.press(k)) return;
   if (k in keys) keys[k] = on;
   else if (!on) return;
   else if (k === 'seme') player.seme();
@@ -638,7 +692,9 @@ function updateScore() {
 // ================= BOUCLE =================
 let last = performance.now(), cam = 0;
 function frame(now) {
-  const dt = Math.min(.05, (now - last) / 1000); last = now;
+  const dt = Math.min(.05, (now - last) / 1000) * (game.timeScale || 1); last = now;
+  game.clock = (game.clock || 0) + dt;
+  if (game.state === 'replay') { replayFrame(dt / (game.timeScale || 1), now); requestAnimationFrame(frame); return; }
   const fighting = game.state === 'fight' || game.state === 'zanshin';
   if (game.state === 'fight') player.guarding = keys.guard;
   const pushing = game.tsuba && keys.fwd && !player.busy;
@@ -683,11 +739,12 @@ function frame(now) {
   cam = lerp(cam, target, 1 - Math.exp(-dt * 4));
   world.setAttribute('transform', `translate(${-cam},0)`);
   far.setAttribute('transform', `translate(${-cam * .35},0)`);
+  if (fighting) recordFrame(dt);
   requestAnimationFrame(frame);
 }
 game.reset();
 requestAnimationFrame(frame);
 </script>
-<script src="modes.js"></script>
+<script src="academy.js"></script>
 </body>
 </html>
