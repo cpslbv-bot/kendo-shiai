@@ -1,0 +1,6 @@
+{
+  "appId": "ma.kendo.shiai",
+  "appName": "Kendo Shiai",
+  "webDir": "www",
+  "android": { "backgroundColor": "#111111" }
+}

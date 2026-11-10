@@ -1,0 +1,12 @@
+{
+  "name": "kendo-shiai",
+  "version": "0.2.0",
+  "description": "Jeu de kendo 2,5D pour Android",
+  "scripts": {},
+  "dependencies": {
+    "@capacitor/android": "^6.2.0",
+    "@capacitor/cli": "^6.2.0",
+    "@capacitor/core": "^6.2.0"
+  },
+  "private": true
+}
