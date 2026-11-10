@@ -8,29 +8,38 @@
   * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; user-select: none; -webkit-user-select: none; }
   html, body { margin: 0; height: 100%; overflow: hidden; background: #0d0b09; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: #fff; touch-action: none; }
   #s { position: fixed; inset: 0; width: 100%; height: 100%; }
-  #score { position: fixed; top: max(10px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 14px; background: rgba(0,0,0,.55); padding: 6px 16px; border-radius: 12px; font-weight: 800; }
+  #score { position: fixed; top: max(8px, env(safe-area-inset-top)); left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 14px; background: rgba(0,0,0,.55); padding: 5px 16px; border-radius: 12px; font-weight: 800; }
   .side { display: flex; align-items: center; gap: 8px; font-size: 15px; }
   .chip { width: 14px; height: 14px; border-radius: 3px; }
   .pts { font-size: 24px; min-width: 18px; text-align: center; }
-  .marks { font-size: 14px; color: #ffd34d; min-width: 30px; }
+  .marks { font-size: 14px; color: #ffd34d; min-width: 24px; }
+  .hans { font-size: 12px; color: #ff6b6b; min-width: 10px; }
   #timer { font-size: 22px; font-variant-numeric: tabular-nums; padding: 0 6px; }
-  #msg { position: fixed; top: 15%; left: 0; right: 0; text-align: center; font-size: clamp(32px, 6.5vw, 64px); font-weight: 900; letter-spacing: 3px; text-shadow: 0 4px 20px #000; opacity: 0; transition: opacity .15s; pointer-events: none; }
-  #sub { position: fixed; top: calc(15% + clamp(42px, 8vw, 78px)); left: 0; right: 0; text-align: center; font-size: clamp(14px, 2.8vw, 20px); font-weight: 700; text-shadow: 0 2px 8px #000; opacity: 0; transition: opacity .15s; pointer-events: none; }
-  .controls { position: fixed; bottom: max(14px, env(safe-area-inset-bottom)); display: flex; gap: 12px; }
+  #kiai { position: fixed; top: calc(max(8px, env(safe-area-inset-top)) + 48px); left: 50%; transform: translateX(-50%); display: flex; align-items: center; gap: 8px; font-size: 11px; font-weight: 800; color: #ffd34d; text-shadow: 0 1px 3px #000; }
+  .kb { width: 120px; height: 8px; background: rgba(0,0,0,.45); border: 1px solid rgba(255,255,255,.35); border-radius: 5px; overflow: hidden; display: flex; }
+  .kb.r { justify-content: flex-end; }
+  .kb i { display: block; height: 100%; width: 50%; background: linear-gradient(90deg, #ffb300, #ffe27a); transition: width .1s; }
+  #msg { position: fixed; top: 17%; left: 0; right: 0; text-align: center; font-size: clamp(30px, 6.2vw, 62px); font-weight: 900; letter-spacing: 3px; text-shadow: 0 4px 20px #000; opacity: 0; transition: opacity .15s; pointer-events: none; }
+  #sub { position: fixed; top: calc(17% + clamp(40px, 7.6vw, 76px)); left: 0; right: 0; text-align: center; font-size: clamp(14px, 2.8vw, 20px); font-weight: 700; text-shadow: 0 2px 8px #000; opacity: 0; transition: opacity .15s; pointer-events: none; }
+  #sub.hot { color: #ffd34d; }
+  .controls { position: fixed; bottom: max(12px, env(safe-area-inset-bottom)); display: flex; gap: 12px; }
   #move { left: max(16px, env(safe-area-inset-left)); }
-  #attack { right: max(16px, env(safe-area-inset-right)); display: grid; grid-template-columns: auto auto; gap: 10px; }
-  .btn { width: 76px; height: 76px; border-radius: 50%; border: 2px solid rgba(255,255,255,.55); background: rgba(15,15,25,.5); color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 800; font-size: 17px; touch-action: none; }
-  .btn small { font-size: 11px; opacity: .8; font-weight: 600; }
+  #attack { right: max(14px, env(safe-area-inset-right)); display: grid; grid-template-columns: repeat(3, auto); gap: 8px; }
+  .btn { width: 68px; height: 68px; border-radius: 50%; border: 2px solid rgba(255,255,255,.55); background: rgba(15,15,25,.5); color: #fff; display: flex; flex-direction: column; align-items: center; justify-content: center; font-weight: 800; font-size: 15px; touch-action: none; }
+  #move .btn { width: 76px; height: 76px; font-size: 20px; }
+  .btn small { font-size: 10px; opacity: .8; font-weight: 600; }
   .btn.on { background: rgba(255,255,255,.35); transform: scale(.94); }
-  .men { border-color: #ff6b6b; } .kote { border-color: #ffd34d; } .do { border-color: #6bd3ff; } .guard { border-color: #aaa; font-size: 13px; }
-  #menu { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; background: radial-gradient(circle at center, rgba(40,28,18,.88), rgba(0,0,0,.96)); z-index: 10; padding: 20px; text-align: center; }
-  #menu h1 { margin: 0; font-size: clamp(32px, 6vw, 56px); letter-spacing: 4px; }
+  .men { border-color: #ff6b6b; } .kote { border-color: #ffd34d; } .do { border-color: #6bd3ff; } .tsuki { border-color: #c38bff; } .seme { border-color: #7ddc7d; } .guard { border-color: #aaa; font-size: 12px; }
+  #menu { position: fixed; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; background: radial-gradient(circle at center, rgba(40,28,18,.9), rgba(0,0,0,.96)); z-index: 10; padding: 16px; text-align: center; overflow-y: auto; }
+  #menu h1 { margin: 0; font-size: clamp(26px, 5vw, 46px); letter-spacing: 4px; }
   #menu h1 small { display: block; font-size: .42em; letter-spacing: 2px; color: #d9c9a8; font-weight: 500; margin-top: 4px; }
-  #menu p { margin: 0; max-width: 620px; color: #ddd; font-size: 14px; line-height: 1.5; }
+  #menu p { margin: 0; max-width: 680px; color: #ddd; font-size: 13px; line-height: 1.5; }
+  #menu ul { margin: 0; padding: 0; list-style: none; max-width: 680px; color: #ddd; font-size: 12.5px; line-height: 1.55; columns: 2; column-gap: 24px; text-align: left; }
+  #menu li b { color: #ffd34d; }
   .row { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
-  .pick { padding: 10px 18px; border-radius: 10px; border: 2px solid #555; background: #222; color: #fff; font-size: 16px; font-weight: 700; }
+  .pick { padding: 9px 18px; border-radius: 10px; border: 2px solid #555; background: #222; color: #fff; font-size: 16px; font-weight: 700; }
   .pick.sel { border-color: #ffd34d; background: #3a3216; }
-  #go { padding: 14px 44px; border-radius: 12px; border: 0; background: #c0392b; color: #fff; font-size: 22px; font-weight: 900; letter-spacing: 2px; }
+  #go { padding: 12px 44px; border-radius: 12px; border: 0; background: #c0392b; color: #fff; font-size: 22px; font-weight: 900; letter-spacing: 2px; }
   #rotate { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; background: #000; z-index: 20; font-size: 20px; text-align: center; padding: 30px; }
   @media (orientation: portrait) and (max-width: 700px) { #rotate { display: flex; } }
 </style>
@@ -49,6 +58,7 @@
     <radialGradient id="light" cx=".5" cy=".3" r=".7"><stop offset="0" stop-color="#fff2cc" stop-opacity=".35"/><stop offset="1" stop-color="#000" stop-opacity="0"/></radialGradient>
     <radialGradient id="vign" cx=".5" cy=".5" r=".75"><stop offset=".6" stop-color="#000" stop-opacity="0"/><stop offset="1" stop-color="#000" stop-opacity=".55"/></radialGradient>
     <radialGradient id="spark"><stop offset="0" stop-color="#fff"/><stop offset=".4" stop-color="#fff6c8" stop-opacity=".8"/><stop offset="1" stop-color="#ffd34d" stop-opacity="0"/></radialGradient>
+    <radialGradient id="aura"><stop offset="0" stop-color="#ffd34d" stop-opacity=".5"/><stop offset="1" stop-color="#ffd34d" stop-opacity="0"/></radialGradient>
     <filter id="blur"><feGaussianBlur stdDeviation="2"/></filter>
   </defs>
   <rect width="1600" height="720" fill="#3e2a17"/>
@@ -60,10 +70,11 @@
 </svg>
 
 <div id="score">
-  <div class="side"><span class="chip" style="background:#fff"></span>Vous <span class="marks" id="mS"></span><span class="pts" id="pS">0</span></div>
+  <div class="side"><span class="chip" style="background:#fff"></span>Vous <span class="hans" id="hS"></span><span class="marks" id="mS"></span><span class="pts" id="pS">0</span></div>
   <div id="timer">3:00</div>
-  <div class="side"><span class="pts" id="pA">0</span><span class="marks" id="mA"></span>IA <span class="chip" style="background:#e53935"></span></div>
+  <div class="side"><span class="pts" id="pA">0</span><span class="marks" id="mA"></span><span class="hans" id="hA"></span>IA <span class="chip" style="background:#e53935"></span></div>
 </div>
+<div id="kiai"><div class="kb"><i id="kS"></i></div>気 KI<div class="kb r"><i id="kA"></i></div></div>
 <div id="msg"></div>
 <div id="sub"></div>
 <div class="controls" id="move">
@@ -74,12 +85,24 @@
   <div class="btn men" data-k="men">MEN<small>面</small></div>
   <div class="btn kote" data-k="kote">KOTE<small>小手</small></div>
   <div class="btn do" data-k="do">DŌ<small>胴</small></div>
+  <div class="btn tsuki" data-k="tsuki">TSUKI<small>突き</small></div>
+  <div class="btn seme" data-k="seme">SEME<small>攻め</small></div>
   <div class="btn guard" data-k="guard">GARDE<small>受け</small></div>
 </div>
 
 <div id="menu">
-  <h1>KENDO SHIAI<small>剣道 試合</small></h1>
-  <p>Vous êtes <b>Shiro</b> (blanc). Avancez ▶ et reculez ◀ pour trouver la bonne distance (maai), puis frappez <b>MEN</b>, <b>KOTE</b> ou <b>DŌ</b>. Maintenez <b>GARDE</b> pour protéger le men et le kote, mais le dō reste ouvert. Il faut 2 drapeaux sur 3 pour un ippon. Le premier à 2 ippons gagne (sanbon shōbu, 3 minutes).</p>
+  <h1>KENDO SHIAI<small>剣道 試合 — v3</small></h1>
+  <p>Vous êtes <b>Shiro</b> (blanc). Premier à 2 ippons, 3 minutes. Il faut 2 drapeaux sur 3 pour un point.</p>
+  <ul>
+    <li><b>◀ ▶</b> gérer la distance (maai)</li>
+    <li><b>MEN / KOTE / DŌ / TSUKI</b> frapper</li>
+    <li><b>Enchaînement</b> : frappez à nouveau juste après une frappe (ex. kote → men)</li>
+    <li><b>SEME</b> : mettre la pression, remplit votre jauge de <b>KI</b> et peut ouvrir l'adversaire</li>
+    <li><b>GARDE</b> (maintenir) : protège men et kote, pas le dō ni le tsuki</li>
+    <li><b>Zanshin</b> : après un point, appuyez sur ◀ ou GARDE, sinon il est annulé</li>
+    <li><b>Tsubazeriai</b> (corps à corps) : ▶ pour pousser, frappez pour un hiki-waza en reculant</li>
+    <li><b>Hansoku</b> : sortir du terrain = avertissement, 2 avertissements = 1 point pour l'adversaire</li>
+  </ul>
   <div class="row">
     <button class="pick" data-l="0">Débutant</button>
     <button class="pick sel" data-l="1">Kyu</button>
@@ -101,7 +124,6 @@ const ease = t => t < .5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
 // ================= DÉCOR =================
 const far = $('far'), world = $('world');
 const GROUND = 610;
-// mur du fond (couche lointaine, parallaxe)
 el('rect', { x: -800, width: 3200, height: 440, fill: 'url(#wall)' }, far);
 for (const x of [-500, -260, 60, 300, 1100, 1340, 1660, 1900]) {
   el('rect', { x, y: 90, width: 200, height: 290, fill: 'url(#shoji)', stroke: '#3a2614', 'stroke-width': 8 }, far);
@@ -114,7 +136,7 @@ for (const [ch, y] of [['剣', 170], ['道', 255]]) el('text', { x: 800, y, 'fon
 el('rect', { x: -800, y: 420, width: 3200, height: 24, fill: '#3e2a17' }, far);
 for (const x of [-560, 20, 560, 1010, 1560, 2140]) el('rect', { x, y: 0, width: 30, height: 444, fill: '#3a2614' }, far);
 
-// arbitres (shinpan), sur la couche lointaine
+// arbitres (shinpan)
 const refs = [];
 function referee(x, s) {
   const g = el('g', { transform: `translate(${x},468) scale(${s})` }, far);
@@ -130,12 +152,14 @@ function referee(x, s) {
     el('rect', { x: side > 0 ? 0 : -30, y: 80, width: 30, height: 28, fill: color }, a);
     return { g: a, side, v: 0, goal: 0 };
   };
-  // le drapeau blanc est du côté de shiro (gauche), le rouge du côté d'aka (droite)
   refs.push({ white: mk(-1, '#ffffff'), red: mk(1, '#e53935') });
 }
 referee(330, .9); referee(800, .8); referee(1270, .9);
+const flagsDown = () => refs.forEach(r => { r.white.goal = 0; r.red.goal = 0; });
+// signal de hansoku : l'arbitre principal croise les drapeaux
+const crossFlags = () => { const r = refs[1]; r.white.goal = .55; r.red.goal = .55; };
 
-// sol (couche du monde)
+// sol
 const planks = el('g', { stroke: '#8a6338', 'stroke-opacity': .45, 'stroke-width': 2 }, world);
 for (let i = -24; i <= 24; i++) el('line', { x1: 800 + i * 70, y1: 440, x2: 800 + i * 190, y2: 720 }, planks);
 for (const y of [470, 515, 575, 650]) el('line', { x1: -1600, y1: y, x2: 3200, y2: y, 'stroke-opacity': .2 }, planks);
@@ -151,6 +175,7 @@ const fx = el('g', {}, world);
 function buildKendoka(aka) {
   const root = el('g', {}, fighters);
   el('ellipse', { cx: 10, cy: 2, rx: 120, ry: 14, fill: '#000', opacity: .3, filter: 'url(#blur)' }, root);
+  const aura = el('ellipse', { cx: 0, cy: -200, rx: 150, ry: 230, fill: 'url(#aura)', opacity: 0 }, root);
   const flip = el('g', aka ? { transform: 'scale(-1,1)' } : {}, root);
   const body = el('g', {}, flip);
   const gi = aka ? 'url(#navy)' : 'url(#white)';
@@ -199,7 +224,7 @@ function buildKendoka(aka) {
     el('rect', { x: -16, y: -16, width: 32, height: 32, rx: 12, fill: '#1d2346', stroke: '#0b0e20', 'stroke-width': 2 }, k);
     el('rect', { x: -12, y: 4, width: 24, height: 12, rx: 5, fill: '#7a4e2c' }, k);
   }
-  return { root, body, fUpper, fFore, nUpper, nFore, shinai, kR, kL, himo1, himo2, trail, backFoot };
+  return { root, body, fUpper, fFore, nUpper, nFore, shinai, kR, kL, himo1, himo2, trail, backFoot, aura };
 }
 
 function ik(sx, sy, hx, hy, l1, l2) {
@@ -209,16 +234,20 @@ function ik(sx, sy, hx, hy, l1, l2) {
 }
 const setL = (l, x1, y1, x2, y2) => { l.setAttribute('x1', x1); l.setAttribute('y1', y1); l.setAttribute('x2', x2); l.setAttribute('y2', y2); };
 
-// Poses : position de la main droite (devant) et angle du shinai (négatif = pointe vers le haut)
+// Poses : main droite (devant) et angle du shinai (négatif = pointe vers le haut)
 const P = {
-  chudan: { x: 62,  y: -188, a: -18 },
-  furi:   { x: 22,  y: -338, a: -112 },
-  men:    { x: 100, y: -262, a: -18 },
-  kote:   { x: 104, y: -214, a: 5 },
-  furiDo: { x: 0,   y: -330, a: -130 },
-  do:     { x: 92,  y: -228, a: 6 },
-  guard:  { x: 46,  y: -318, a: -32 },
-  recoil: { x: 50,  y: -200, a: -4 },
+  chudan:  { x: 62,  y: -188, a: -18 },
+  furi:    { x: 22,  y: -338, a: -112 },
+  men:     { x: 100, y: -262, a: -18 },
+  kote:    { x: 104, y: -214, a: 5 },
+  furiDo:  { x: 0,   y: -330, a: -130 },
+  do:      { x: 92,  y: -228, a: 6 },
+  prepTsu: { x: 34,  y: -196, a: -15 },
+  tsuki:   { x: 122, y: -226, a: -11 },
+  guard:   { x: 46,  y: -318, a: -32 },
+  seme:    { x: 82,  y: -196, a: -13 },
+  tsuba:   { x: 84,  y: -246, a: -68 },
+  recoil:  { x: 50,  y: -200, a: -4 },
 };
 const mixP = (p, q, t) => ({ x: lerp(p.x, q.x, t), y: lerp(p.y, q.y, t), a: lerp(p.a, q.a, t) });
 
@@ -226,33 +255,61 @@ class Fighter {
   constructor(aka) {
     this.aka = aka; this.v = buildKendoka(aka);
     this.dir = aka ? -1 : 1; this.x = 0; this.vel = 0;
-    this.pose = { ...P.chudan }; this.guarding = false; this.guardT = 0;
+    this.pose = { ...P.chudan }; this.guarding = false; this.guardT = 0; this.tsubaT = 0;
     this.action = null; this.recoil = 0; this.bobPhase = Math.random() * 6; this.lean = 0;
+    this.kiai = 50; this.hansoku = 0; this.openT = 0;
   }
   get busy() { return !!this.action; }
+  get striking() { return !!this.action && this.action.kind === 'strike'; }
   strike(type) {
-    if (this.action || game.state !== 'fight') return false;
-    this.action = { type, t: 0, hit: false, stomp: false };
+    if (game.state !== 'fight') return false;
+    const a = this.action;
+    if (a) {
+      // renzoku-waza : enchaîner une 2e frappe juste après l'impact de la 1re
+      if (a.kind === 'strike' && !a.chained && a.t >= .30 && a.t < .62 && type !== a.type) {
+        this.action = { kind: 'strike', type, t: .06, from: { ...this.pose }, combo: a.type, prevFail: !!a.fail, chained: true, hiki: false };
+        return true;
+      }
+      return false;
+    }
+    this.action = { kind: 'strike', type, t: 0, from: { ...this.pose }, hiki: game.tsuba, combo: null };
     this.guarding = false; return true;
   }
+  seme() {
+    if (this.action || game.state !== 'fight' || game.tsuba) return false;
+    this.action = { kind: 'seme', t: 0, from: { ...this.pose } };
+    return true;
+  }
   update(dt) {
-    this.guardT = clamp(this.guardT + (this.guarding && !this.action ? 1 : -1) * dt * 9, 0, 1);
-    let p = mixP(P.chudan, P.guard, ease(this.guardT));
+    this.guardT = clamp(this.guardT + (this.guarding && !this.action && !game.tsuba ? 1 : -1) * dt * 9, 0, 1);
+    this.tsubaT = clamp(this.tsubaT + (game.tsuba ? 1 : -1) * dt * 6, 0, 1);
+    this.openT = Math.max(0, this.openT - dt);
+    let p = mixP(mixP(P.chudan, P.guard, ease(this.guardT)), P.tsuba, ease(this.tsubaT));
     this.lean = 0;
-    if (this.action) {
-      const a = this.action; a.t += dt; const t = a.t;
-      const up = a.type === 'do' ? P.furiDo : P.furi, end = P[a.type];
-      if (t < .16) p = mixP(P.chudan, up, ease(t / .16));
+    const a = this.action;
+    if (a && a.kind === 'seme') {
+      a.t += dt; const t = a.t;
+      if (t < .12) p = mixP(a.from, P.seme, ease(t / .12)); else if (t < .3) p = P.seme; else p = mixP(P.seme, P.chudan, ease((t - .3) / .15));
+      if (t < .3) this.x += this.dir * dt * 150;
+      this.lean = t < .3 ? 3 : 0;
+      if (t >= .1 && !a.done) { a.done = true; game.onSeme(this); }
+      if (t >= .45) this.action = null;
+    } else if (a) {
+      a.t += dt; const t = a.t;
+      const up = a.type === 'do' ? P.furiDo : a.type === 'tsuki' ? P.prepTsu : P.furi, end = P[a.type];
+      if (t < .16) p = mixP(a.from, up, ease(t / .16));
       else if (t < .30) p = mixP(up, end, ease((t - .16) / .14));
       else if (t < .62) p = end;
       else if (t < .95) p = mixP(end, P.chudan, ease((t - .62) / .33));
       if (t >= .16 && t < .32) {
-        this.x += this.dir * dt * 1060;  // fumikomi
-        this.lean = 6;
+        // fumikomi : en avant, ou en arrière pour un hiki-waza, plus court pour un enchaînement
+        const speed = a.hiki ? -690 : a.chained ? 300 : 1060;
+        this.x += this.dir * dt * speed;
+        this.lean = a.hiki ? -4 : 6;
         if (!a.stomp) { a.stomp = true; sfx.kiai(this.aka, a.type); }
-      } else if (t >= .32 && t < .62) this.lean = 3;
+      } else if (t >= .32 && t < .62) this.lean = a.hiki ? -2 : 3;
       this.trailOn = t >= .18 && t < .34;
-      if (t >= .30 && !a.hit) { a.hit = true; sfx.stomp(); game.resolveHit(this, a.type); }
+      if (t >= .30 && !a.hit) { a.hit = true; sfx.stomp(); game.resolveHit(this, a); }
       if (t >= .95) { this.action = null; this.trailOn = false; }
     }
     if (this.recoil > 0) { this.recoil = Math.max(0, this.recoil - dt * 2.2); p = mixP(p, P.recoil, Math.sin(this.recoil * Math.PI) * .8); }
@@ -265,6 +322,7 @@ class Fighter {
     const bob = Math.sin(now / 280 + this.bobPhase) * 2.5 + (moving ? Math.abs(Math.sin(now / 90)) * -4 : 0);
     v.root.setAttribute('transform', `translate(${this.x},${GROUND})`);
     v.body.setAttribute('transform', `translate(0,${bob * .3}) rotate(${this.lean},0,-20)`);
+    v.aura.setAttribute('opacity', clamp((this.kiai - 60) / 40, 0, 1) * (.6 + .4 * Math.sin(now / 150)));
     const sh = [2, -256 + bob], r = p.a * Math.PI / 180;
     const hx = p.x, hy = p.y + bob, lx = hx - Math.cos(r) * 54, ly = hy - Math.sin(r) * 54;
     const [ex, ey] = ik(sh[0], sh[1], hx, hy, 62, 66), [fx2, fy2] = ik(sh[0] - 6, sh[1] + 4, lx, ly, 58, 60);
@@ -277,14 +335,12 @@ class Fighter {
     v.himo1.setAttribute('d', `M -34 -6 Q -74 ${18 + sw} -86 ${60 + sw}`);
     v.himo2.setAttribute('d', `M -34 0 Q -66 ${30 + sw} -70 ${72 + sw}`);
     v.backFoot.setAttribute('transform', moving || this.action ? `translate(0,${-Math.abs(Math.sin(now / 90)) * 6})` : '');
-    // traînée du shinai pendant la coupe
     if (this.trailOn) {
       const tipx = hx + Math.cos(r) * 240, tipy = hy + Math.sin(r) * 240;
       this.tr = this.tr || []; this.tr.push([tipx, tipy]); if (this.tr.length > 5) this.tr.shift();
       v.trail.setAttribute('d', 'M ' + this.tr.map(q => q.join(' ')).join(' L ')); v.trail.setAttribute('opacity', .35);
     } else { this.tr = []; v.trail.setAttribute('opacity', 0); }
   }
-  // point de contact du shinai (monouchi), en coordonnées du monde
   tip() { const r = this.pose.a * Math.PI / 180, d = 205; return [this.x + this.dir * (this.pose.x + Math.cos(r) * d), GROUND + this.pose.y + Math.sin(r) * d]; }
 }
 
@@ -301,17 +357,24 @@ const sfx = (() => {
     const g = ctx.createGain(); g.gain.value = vol;
     s.connect(f).connect(g).connect(ctx.destination); s.start();
   }
+  function tone(f0, f1, dur, vol, type = 'sine') {
+    if (!ctx) return; const o = ctx.createOscillator(), g = ctx.createGain(), t = ctx.currentTime; o.type = type;
+    o.frequency.setValueAtTime(f0, t); o.frequency.exponentialRampToValueAtTime(f1, t + dur);
+    g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(.001, t + dur); o.connect(g).connect(ctx.destination); o.start(); o.stop(t + dur + .02);
+  }
   return {
     init,
     clack: () => noise(.12, 2400, 2, 1.4),
     pop: () => noise(.18, 1100, 1.2, 1.8),
-    stomp: () => { if (!ctx) return; const o = ctx.createOscillator(), g = ctx.createGain(), t = ctx.currentTime; o.frequency.setValueAtTime(110, t); o.frequency.exponentialRampToValueAtTime(40, t + .15); g.gain.setValueAtTime(.9, t); g.gain.exponentialRampToValueAtTime(.001, t + .2); o.connect(g).connect(ctx.destination); o.start(); o.stop(t + .22); noise(.08, 300, .8, 1); },
+    seme: () => { tone(160, 120, .25, .25, 'triangle'); noise(.06, 400, .8, .6); },
+    whistle: () => tone(2200, 2100, .5, .12, 'square'),
+    stomp: () => { tone(110, 40, .2, .9); noise(.08, 300, .8, 1); },
     kiai: (aka, type) => {
       if (!ctx) return; const t0 = ctx.currentTime, base = aka ? 190 : 230;
       const o = ctx.createOscillator(); o.type = 'sawtooth';
       o.frequency.setValueAtTime(base * 1.25, t0); o.frequency.linearRampToValueAtTime(base, t0 + .35);
       const f = ctx.createBiquadFilter(); f.type = 'bandpass'; f.Q.value = 3;
-      f.frequency.setValueAtTime(type === 'do' ? 700 : 500, t0); f.frequency.linearRampToValueAtTime(type === 'kote' ? 1600 : 900, t0 + .3);
+      f.frequency.setValueAtTime(type === 'do' ? 700 : 500, t0); f.frequency.linearRampToValueAtTime(type === 'kote' ? 1600 : type === 'tsuki' ? 1200 : 900, t0 + .3);
       const g = ctx.createGain(); g.gain.setValueAtTime(0, t0); g.gain.linearRampToValueAtTime(.35, t0 + .04); g.gain.exponentialRampToValueAtTime(.001, t0 + .42);
       o.connect(f).connect(g).connect(ctx.destination); o.start(t0); o.stop(t0 + .45);
     },
@@ -321,72 +384,137 @@ const sfx = (() => {
 // ================= EFFETS =================
 function spark(x, y, big) {
   const g = el('g', { transform: `translate(${x},${y})` }, fx);
-  const c = el('circle', { r: big ? 46 : 26, fill: 'url(#spark)' }, g);
+  el('circle', { r: big ? 46 : 26, fill: 'url(#spark)' }, g);
   for (let i = 0; i < (big ? 8 : 4); i++) { const a = i / (big ? 8 : 4) * Math.PI * 2; el('line', { x1: Math.cos(a) * 14, y1: Math.sin(a) * 14, x2: Math.cos(a) * (big ? 52 : 30), y2: Math.sin(a) * (big ? 52 : 30), stroke: '#fff8d8', 'stroke-width': 4, 'stroke-linecap': 'round' }, g); }
   let t = 0; const f = () => { t += .06; g.setAttribute('opacity', 1 - t); g.setAttribute('transform', `translate(${x},${y}) scale(${1 + t * .6})`); if (t < 1) requestAnimationFrame(f); else g.remove(); };
+  requestAnimationFrame(f);
+}
+function ring(x) {
+  const c = el('ellipse', { cx: x, cy: GROUND - 200, rx: 60, ry: 120, fill: 'none', stroke: '#ffd34d', 'stroke-width': 4 }, fx);
+  let t = 0; const f = () => { t += .05; c.setAttribute('opacity', 1 - t); c.setAttribute('rx', 60 + t * 90); c.setAttribute('ry', 120 + t * 90); if (t < 1) requestAnimationFrame(f); else c.remove(); };
   requestAnimationFrame(f);
 }
 
 // ================= JEU =================
 const LEVELS = [
-  { react: .2, attack: .35, think: [1.0, 1.8], sloppy: .45 },
-  { react: .45, attack: .55, think: [.7, 1.3], sloppy: .25 },
-  { react: .7, attack: .75, think: [.45, .9], sloppy: .1 },
+  { react: .2,  attack: .35, think: [1.0, 1.8], sloppy: .45, seme: .12, combo: .1, zanshin: .6,  flinch: .5,  push: 60 },
+  { react: .45, attack: .55, think: [.7, 1.3],  sloppy: .25, seme: .22, combo: .3, zanshin: .8,  flinch: .32, push: 100 },
+  { react: .7,  attack: .75, think: [.45, .9],  sloppy: .1,  seme: .32, combo: .5, zanshin: .95, flinch: .18, push: 135 },
 ];
-const LABEL = { men: 'MEN', kote: 'KOTE', do: 'DŌ' };
-const MARK = { men: 'M', kote: 'K', do: 'D' };
-const IDEAL = 370;  // distance idéale (en px) au moment de l'impact
+const LABEL = { men: 'MEN', kote: 'KOTE', do: 'DŌ', tsuki: 'TSUKI' };
+const MARK = { men: 'M', kote: 'K', do: 'D', tsuki: 'T' };
+const IDEAL = 370;          // distance idéale (px) au moment de l'impact
+const MIN_D = 250;          // distance minimale entre les deux corps
 const player = new Fighter(false), ai = new Fighter(true);
+const other = f => f === player ? ai : player;
+const who = f => f === player ? 'vous' : 'l\'IA';
 
 const game = {
   state: 'menu', level: 1, time: 180, score: { s: [], a: [] }, pauseT: 0, next: null,
+  tsuba: false, tsubaClock: 0, tsubaTime: 0, z: null,
   reset() {
     player.x = 500; ai.x = 1100;
-    for (const f of [player, ai]) { f.action = null; f.guarding = false; f.vel = 0; f.recoil = 0; f.trailOn = false; }
-    refs.forEach(r => { r.white.goal = 0; r.red.goal = 0; });
-    aiBrain.timer = .9;
+    for (const f of [player, ai]) { f.action = null; f.guarding = false; f.vel = 0; f.recoil = 0; f.trailOn = false; f.kiai = 50; f.openT = 0; }
+    this.tsuba = false; this.tsubaClock = 0; this.tsubaTime = 0; this.z = null;
+    flagsDown(); aiBrain.timer = .9; aiBrain.sepT = 0;
   },
   start() {
-    this.time = 180; this.score = { s: [], a: [] }; updateScore(); this.reset();
+    this.time = 180; this.score = { s: [], a: [] }; player.hansoku = ai.hansoku = 0; updateScore(); this.reset();
     this.state = 'pause'; showMsg('HAJIME !', 'Début du combat'); this.pauseT = 1.2; this.next = 'fight';
   },
-  resolveHit(att, type) {
+  onSeme(f) {
+    sfx.seme(); ring(f.x + f.dir * 40);
+    f.kiai = Math.min(100, f.kiai + 22);
+    if (f === player) aiBrain.onSemed();
+    else { player.kiai = Math.max(0, player.kiai - 10); showMsg('', 'L\'IA fait seme — gardez votre calme', .8); }
+  },
+  resolveHit(att, a) {
     if (this.state !== 'fight') return;
-    const def = att === player ? ai : player;
+    const type = a.type, def = other(att), isP = att === player;
     const d = Math.abs(att.x - def.x);
     const [tx, ty] = att.tip();
-    const isP = att === player;
-    if (d > IDEAL + 120) { if (isP) showMsg('', 'Trop loin — rapprochez-vous', .9); return; }
-    if (d < IDEAL - 110) { sfx.clack(); spark(tx, ty, false); if (isP) showMsg('', 'Trop près', .9); return; }
-    if (def.guardT > .55 && type !== 'do') { sfx.clack(); spark(tx, ty, false); showMsg('', isP ? 'Bloqué par l\'adversaire' : 'Bien bloqué !', .9); return; }
-    if (def.action && def.action.t > .2 && def.action.t < .34) { sfx.clack(); spark(tx, ty, false); showMsg('', 'Ai-uchi — frappes simultanées', 1); return; }
+    const fail = (sound, text) => { a.fail = true; if (sound) { sfx.clack(); spark(tx, ty, false); } if (text) showMsg('', text, .9); };
+    if (d > IDEAL + 120) return fail(false, isP ? 'Trop loin — rapprochez-vous' : '');
+    if (d < IDEAL - 110) return fail(true, isP ? 'Trop près' : '');
+    if (def.guardT > .55 && (type === 'men' || type === 'kote')) { att.kiai = Math.max(0, att.kiai - 15); return fail(true, isP ? 'Bloqué par l\'adversaire' : 'Bien bloqué !'); }
+    if (def.striking && def.action.t > .2 && def.action.t < .34) return fail(true, 'Ai-uchi — frappes simultanées');
     sfx.pop(); spark(tx, ty, true); def.recoil = 1;
     let q = 1 - Math.abs(d - IDEAL) / 120;
-    const raised = def.guardT > .4 || (def.action && def.action.t < .2);
-    if (type === 'do') q += raised ? .25 : -.35;                       // le dō marche quand l'adversaire lève les bras
-    if (type === 'kote' && def.action && def.action.t < .16) q += .3;  // debana-kote
+    const raised = def.guardT > .4 || (def.striking && def.action.t < .2);
+    if (type === 'do') q += raised ? .25 : -.35;                          // le dō marche quand l'adversaire lève les bras
+    if (type === 'kote' && def.striking && def.action.t < .16) q += .3;   // debana-kote
+    if (type === 'tsuki') q += def.openT > 0 ? .1 : -.15;                 // le tsuki est difficile sans ouverture
+    if (def.openT > 0) q += .25;                                          // ouverture créée par le seme
+    if (a.combo && a.prevFail) q += .15;                                  // la 1re frappe a fait bouger la garde
+    if (a.hiki) q -= .05;
+    q += (att.kiai - 50) / 250;                                           // ki-ken-tai-ichi
     if (!isP) q -= LEVELS[this.level].sloppy * Math.random();
+    att.kiai *= .45;
     let flags = 0;
     refs.forEach(r => { if (q + (Math.random() * .4 - .2) > .42) { flags++; (isP ? r.white : r.red).goal = 1; } });
+    const name = (a.hiki ? 'hiki-' : '') + (a.combo ? `${a.combo}-${type}` : type);
     if (flags >= 2) {
-      (isP ? this.score.s : this.score.a).push(MARK[type]); updateScore();
-      const won = this.score.s.length >= 2 || this.score.a.length >= 2;
-      showMsg(`${LABEL[type]} ARI !`, `${isP ? 'Ippon pour vous' : 'Ippon pour l\'IA'} — ${flags} drapeaux`, 1.9);
-      this.state = 'pause'; this.pauseT = 2.3; this.next = won ? 'end' : 'restart';
+      // drapeaux levés, mais le point n'est confirmé qu'avec le zanshin
+      this.state = 'zanshin'; this.z = { att, type, flags, name, t: 0, ok: false };
+      showMsg(`${LABEL[type]} ARI ?`, isP ? 'ZANSHIN ! Appuyez sur ◀ ou GARDE' : `${name.toUpperCase()} de l'IA…`, 1.1);
+      if (isP) $('sub').classList.add('hot');
     } else {
       showMsg('', `Pas valable (${flags} drapeau${flags > 1 ? 'x' : ''})`, 1);
-      setTimeout(() => refs.forEach(r => { r.white.goal = 0; r.red.goal = 0; }), 900);
+      setTimeout(flagsDown, 900);
     }
   },
+  confirmIppon() {
+    const { att, type, flags, name } = this.z, isP = att === player;
+    (isP ? this.score.s : this.score.a).push(MARK[type]); updateScore();
+    const won = this.score.s.length >= 2 || this.score.a.length >= 2;
+    showMsg(`${LABEL[type]} ARI !`, `${isP ? 'Ippon pour vous' : 'Ippon pour l\'IA'} — ${name} · ${flags} drapeaux`, 1.9);
+    this.state = 'pause'; this.pauseT = 2.3; this.next = won ? 'end' : 'restart';
+  },
+  hansoku(f) {
+    if (this.state !== 'fight') return;
+    sfx.whistle(); crossFlags();
+    f.hansoku++;
+    if (f.hansoku >= 2) {
+      f.hansoku = 0;
+      (f === player ? this.score.a : this.score.s).push('H'); updateScore();
+      const won = this.score.s.length >= 2 || this.score.a.length >= 2;
+      showMsg('HANSOKU NIKAI', `Jōgai — 2e avertissement : 1 point pour ${who(other(f))}`, 2);
+      this.state = 'pause'; this.pauseT = 2.3; this.next = won ? 'end' : 'restart';
+    } else {
+      updateScore();
+      showMsg('HANSOKU ICHIKAI', `Jōgai — ${f === player ? 'vous êtes sorti' : 'l\'IA est sortie'} du terrain (1er avertissement)`, 1.8);
+      this.state = 'pause'; this.pauseT = 2; this.next = 'resume';
+    }
+  },
+  wakare() {
+    sfx.whistle(); showMsg('WAKARE !', 'Séparation — reprise à distance', 1.2);
+    const m = clamp((player.x + ai.x) / 2, COURT.l + 360, COURT.r - 360);
+    player.x = m - 290; ai.x = m + 290; this.tsuba = false; this.tsubaClock = 0; this.tsubaTime = 0;
+  },
   update(dt) {
-    if (this.state === 'fight') {
+    if (this.state === 'fight' || this.state === 'zanshin') {
       this.time -= dt;
-      if (this.time <= 0) { this.time = 0; this.state = 'pause'; this.pauseT = 1.5; this.next = 'end'; showMsg('YAME !', 'Temps écoulé'); }
-      $('timer').textContent = `${Math.floor(this.time / 60)}:${String(Math.floor(this.time % 60)).padStart(2, '0')}`;
+      if (this.time <= 0 && this.state === 'fight') { this.time = 0; this.state = 'pause'; this.pauseT = 1.5; this.next = 'end'; showMsg('YAME !', 'Temps écoulé'); }
+      $('timer').textContent = `${Math.floor(Math.max(0, this.time) / 60)}:${String(Math.floor(Math.max(0, this.time) % 60)).padStart(2, '0')}`;
+    }
+    if (this.state === 'zanshin') {
+      const z = this.z; z.t += dt;
+      if (z.att === player && z.t > .05 && (keys.back || keys.guard)) z.ok = true;
+      if (z.t >= 1.0) {
+        $('sub').classList.remove('hot');
+        const ok = z.att === player ? z.ok : Math.random() < LEVELS[this.level].zanshin;
+        if (ok) this.confirmIppon();
+        else {
+          flagsDown(); sfx.whistle();
+          showMsg('TORIKESHI !', z.att === player ? 'Point annulé : pas de zanshin après la frappe' : 'Point de l\'IA annulé : pas de zanshin', 1.6);
+          this.state = 'fight'; this.z = null;
+        }
+      }
     } else if (this.state === 'pause') {
       this.pauseT -= dt;
       if (this.pauseT <= 0) {
         if (this.next === 'fight') this.state = 'fight';
+        else if (this.next === 'resume') { this.reset(); showMsg('HAJIME !', 'Reprise'); this.pauseT = 1; this.next = 'fight'; }
         else if (this.next === 'restart') {
           this.reset(); const tie = this.score.s.length === 1 && this.score.a.length === 1;
           showMsg(tie ? 'SHŌBU !' : 'NIHONME !', tie ? 'Point décisif' : 'Deuxième point'); this.pauseT = 1.3; this.next = 'fight';
@@ -407,10 +535,10 @@ const game = {
 
 // ================= IA =================
 const aiBrain = {
-  timer: 1, want: 560, guardTimer: 0,
+  timer: 1, want: 560, guardTimer: 0, sepT: 0,
   onPlayerStrike(type) {
     const L = LEVELS[game.level];
-    if (ai.busy || Math.random() >= L.react) return;
+    if (ai.busy || game.tsuba || Math.random() >= L.react) return;
     setTimeout(() => {
       if (ai.busy || game.state !== 'fight') return;
       if (game.level === 2 && type === 'men' && Math.random() < .3) { ai.strike('do'); return; }  // contre en dō
@@ -418,35 +546,71 @@ const aiBrain = {
       ai.guarding = true; this.guardTimer = .6;
     }, 60 + Math.random() * 140);
   },
+  onSemed() {
+    // l'IA résiste au seme selon son niveau et la différence de ki
+    const L = LEVELS[game.level];
+    const p = clamp(L.flinch + (player.kiai - ai.kiai) / 200, .05, .9);
+    if (ai.busy || Math.random() >= p) { ai.kiai = Math.min(100, ai.kiai + 5); return; }
+    ai.kiai = Math.max(0, ai.kiai - 15); ai.openT = .7;
+    const r = Math.random();
+    if (r < .4) { ai.guarding = true; this.guardTimer = .5; showMsg('', 'L\'IA lève les bras — le dō est ouvert !', .8); }
+    else if (r < .7) { ai.strike('men'); showMsg('', 'L\'IA attaque trop tôt — contre-attaquez !', .8); }
+    else { this.want = 700; showMsg('', 'L\'IA recule sous la pression', .8); }
+  },
   update(dt) {
     if (game.state !== 'fight') { ai.vel = 0; return; }
     const L = LEVELS[game.level];
     if (this.guardTimer > 0) { this.guardTimer -= dt; if (this.guardTimer <= 0) ai.guarding = false; }
     const d = Math.abs(ai.x - player.x);
+    const a = ai.action;
+    if (a && a.kind === 'strike' && !a.chained && !a.comboTried && a.t > .31) {
+      a.comboTried = true;
+      if (a.fail && game.level > 0 && Math.random() < L.combo) ai.strike(a.type === 'kote' ? 'men' : Math.random() < .5 ? 'men' : 'do');
+    }
+    if (this.sepT > 0) { this.sepT -= dt; ai.vel = ai.busy ? 0 : 260; return; }
     this.timer -= dt;
+    if (game.tsuba) {
+      ai.vel = 0;
+      if (this.timer <= 0) {
+        this.timer = lerp(L.think[0], L.think[1], Math.random()) + .4;
+        if (!ai.busy) { const r = Math.random(); if (r < .22) this.sepT = .6; else ai.strike(r < .55 ? 'men' : r < .8 ? 'do' : 'kote'); }
+      }
+      return;
+    }
     if (this.timer <= 0) {
       this.timer = lerp(L.think[0], L.think[1], Math.random());
-      if (d > 470 && d < 590 && !ai.busy && Math.random() < L.attack) {
+      if (!ai.busy) {
         const r = Math.random();
-        ai.strike(player.guardT > .4 ? 'do' : r < .5 ? 'men' : r < .85 ? 'kote' : 'do');
-      } else this.want = Math.random() < .5 ? 500 + Math.random() * 60 : 600 + Math.random() * 120;
+        if (d > 470 && d < 590 && Math.random() < L.attack) {
+          ai.strike(player.guardT > .4 || player.openT > 0 ? 'do' : (game.level === 2 && r < .08) ? 'tsuki' : r < .5 ? 'men' : r < .85 ? 'kote' : 'do');
+        } else if (d > 480 && d < 680 && Math.random() < L.seme) ai.seme();
+        else this.want = Math.random() < .5 ? 500 + Math.random() * 60 : 600 + Math.random() * 120;
+      }
     }
-    ai.vel = ai.busy ? 0 : clamp((d - this.want) * 3, -260, 260) * ai.dir;
+    // au contact après une frappe : l'IA choisit d'entrer en tsubazeriai ou de se dégager
+    if (d < 340 && this.close === undefined) this.close = Math.random() < .6;
+    if (d > 420) this.close = undefined;
+    const want = this.close ? MIN_D : this.want;
+    ai.vel = ai.busy ? 0 : clamp((d - want) * 3, -260, 260) * ai.dir;
+    if (ai.x > COURT.r - 190) ai.vel = Math.min(ai.vel, 0);   // ne pas sortir du terrain volontairement
   },
+  pushForce(now) { return LEVELS[game.level].push * Math.max(0, Math.sin(now / 700)); },
 };
 
 // ================= COMMANDES =================
 const keys = { fwd: false, back: false, guard: false };
 function press(k, on) {
   if (k in keys) keys[k] = on;
-  else if (on && player.strike(k)) aiBrain.onPlayerStrike(k);
+  else if (!on) return;
+  else if (k === 'seme') player.seme();
+  else if (player.strike(k)) aiBrain.onPlayerStrike(k);
 }
 document.querySelectorAll('.btn').forEach(b => {
   const k = b.dataset.k;
   b.addEventListener('pointerdown', e => { e.preventDefault(); b.classList.add('on'); press(k, true); });
   for (const ev of ['pointerup', 'pointercancel', 'pointerleave']) b.addEventListener(ev, e => { e.preventDefault(); b.classList.remove('on'); press(k, false); });
 });
-const KEYMAP = { ArrowRight: 'fwd', ArrowLeft: 'back', a: 'men', z: 'kote', e: 'do', ' ': 'guard' };
+const KEYMAP = { ArrowRight: 'fwd', ArrowLeft: 'back', a: 'men', z: 'kote', e: 'do', r: 'tsuki', s: 'seme', ' ': 'guard' };
 addEventListener('keydown', e => { const k = KEYMAP[e.key]; if (k && !e.repeat) press(k, true); });
 addEventListener('keyup', e => { const k = KEYMAP[e.key]; if (k) press(k, false); });
 document.querySelectorAll('.pick').forEach(b => b.addEventListener('click', () => {
@@ -460,23 +624,51 @@ let msgTimer = 0;
 function showMsg(big, small = '', dur = 1.4) {
   $('msg').textContent = big; $('sub').textContent = small;
   $('msg').style.opacity = big ? 1 : 0; $('sub').style.opacity = small ? 1 : 0; msgTimer = dur;
+  if (!small.startsWith('ZANSHIN')) $('sub').classList.remove('hot');
 }
 function updateScore() {
   $('pS').textContent = game.score.s.length; $('pA').textContent = game.score.a.length;
   $('mS').textContent = game.score.s.join(' '); $('mA').textContent = game.score.a.join(' ');
+  $('hS').textContent = '▲'.repeat(player.hansoku); $('hA').textContent = '▲'.repeat(ai.hansoku);
 }
 
 // ================= BOUCLE =================
 let last = performance.now(), cam = 0;
 function frame(now) {
   const dt = Math.min(.05, (now - last) / 1000); last = now;
+  const fighting = game.state === 'fight' || game.state === 'zanshin';
   if (game.state === 'fight') player.guarding = keys.guard;
-  player.vel = (game.state === 'fight' && !player.busy) ? ((keys.fwd ? 260 : 0) - (keys.back ? 260 : 0)) : 0;
+  const pushing = game.tsuba && keys.fwd && !player.busy;
+  player.vel = (fighting && !player.busy && !pushing) ? ((keys.fwd ? 260 : 0) - (keys.back ? 260 : 0)) : 0;
   aiBrain.update(dt);
   player.update(dt); ai.update(dt);
-  const minD = 250;
-  if (ai.x - player.x < minD) { const m = (ai.x + player.x) / 2; player.x = m - minD / 2; ai.x = m + minD / 2; }
-  player.x = clamp(player.x, COURT.l + 60, COURT.r - 60 - minD); ai.x = clamp(ai.x, COURT.l + 60 + minD, COURT.r - 60);
+  // poussée en tsubazeriai (taiatari)
+  if (game.tsuba && game.state === 'fight' && !player.busy && !ai.busy && aiBrain.sepT <= 0) {
+    const net = (pushing ? 150 : 0) - aiBrain.pushForce(now);
+    player.x += net * dt; ai.x += net * dt;
+    if (pushing) player.kiai = Math.min(100, player.kiai + 10 * dt);
+  }
+  let d = ai.x - player.x;
+  if (d < MIN_D) { const m = (ai.x + player.x) / 2; player.x = m - MIN_D / 2; ai.x = m + MIN_D / 2; d = MIN_D; }
+  player.x = clamp(player.x, COURT.l - 160, COURT.r); ai.x = clamp(ai.x, COURT.l, COURT.r + 160);
+  // jōgai : un pied hors du terrain
+  if (game.state === 'fight') {
+    if (player.x - 75 < COURT.l) game.hansoku(player);
+    else if (ai.x + 75 > COURT.r) game.hansoku(ai);
+  }
+  // tsubazeriai : les deux corps au contact, sans frappe en cours
+  if (game.state === 'fight') {
+    if (d <= MIN_D + 15 && !player.striking && !ai.striking) { game.tsubaClock += dt; if (game.tsubaClock > .3 && !game.tsuba) { game.tsuba = true; game.tsubaTime = 0; showMsg('', 'Tsubazeriai — ▶ pour pousser, frappez pour un hiki-waza', 1.2); } }
+    else if (d > 320) { game.tsuba = false; game.tsubaClock = 0; }
+    if (game.tsuba) { game.tsubaTime += dt; if (game.tsubaTime > 7) game.wakare(); }
+  }
+  // ki : présence à la bonne distance, perdu en reculant
+  if (game.state === 'fight') for (const f of [player, ai]) {
+    if (!f.busy && d > 470 && d < 650 && Math.abs(f.vel) < 1) f.kiai += 6 * dt;
+    if (f.vel * f.dir < -1) f.kiai -= 12 * dt;
+    f.kiai = clamp(f.kiai, 0, 100);
+  }
+  $('kS').style.width = player.kiai + '%'; $('kA').style.width = ai.kiai + '%';
   player.draw(now); ai.draw(now);
   for (const r of refs) for (const f of [r.white, r.red]) {
     f.v = lerp(f.v, f.goal, 1 - Math.exp(-dt * 12));
@@ -484,7 +676,6 @@ function frame(now) {
   }
   game.update(dt);
   if (msgTimer > 0) { msgTimer -= dt; if (msgTimer <= 0) { $('msg').style.opacity = 0; $('sub').style.opacity = 0; } }
-  // caméra : suit le centre du combat, décor lointain en parallaxe (effet 2,5D)
   const target = (player.x + ai.x) / 2 - 800;
   cam = lerp(cam, target, 1 - Math.exp(-dt * 4));
   world.setAttribute('transform', `translate(${-cam},0)`);
