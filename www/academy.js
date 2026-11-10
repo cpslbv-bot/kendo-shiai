@@ -329,18 +329,19 @@ function home() {
   token++; clearAll(); game.state = 'over'; showMsg('', ''); showHUD(true, true); setOpp('IA');
   const max = prof.g >= GRADES.length - 1, r = reqStatus();
   render(`
-    <h1>KENDO SHIAI<small>剣道 試合 — v5</small></h1>
+    <h1>KENDO SHIAI<small>剣道 試合 — v6</small></h1>
     <div class="grade">Grade <b>${GRADES[prof.g]}</b>
       ${max ? '<span>Grade maximal</span>' : `<span>Leçons ${r.done}/${r.ls.length}</span><span class="bar"><i style="width:${r.ls.length ? r.done / r.ls.length * 100 : 100}%"></i></span><span>Victoires ${r.wins}/${r.n}</span><span class="bar"><i style="width:${r.wins / r.n * 100}%"></i></span>`}
     </div>
     <div class="grid">
       <button class="hb" id="bDojo">道場 DOJO<small>Cursus par grade · ${Object.keys(prof.stars).length}/${L.length} leçons</small></button>
-      <button class="hb gold" id="bTour">🏆 TOURNOI<small>8 combattants de votre niveau · ${prof.titles} titre${prof.titles > 1 ? 's' : ''}</small></button>
+      <button class="hb gold" id="bTour">🏆 TOURNOI<small>Poules + tableau final, 8 à 64 combattants · ${prof.titles} titre${prof.titles > 1 ? 's' : ''}</small></button>
       <button class="hb ${r.ok && !max ? 'main' : ''}" id="bShin">審査 SHINSA<small>${max ? 'Vous êtes au sommet' : r.ok ? `Passer le ${GRADES[prof.g + 1]}` : 'Voir le programme de l\'examen'}</small></button>
       <button class="hb" id="bFree">⚔ COMBAT LIBRE<small>Débutant, Kyu ou Dan</small></button>
+      <button class="hb" id="bCust">🎨 MON KENDOKA<small>Couleurs, nom, drapeau</small></button>
     </div>
     <p>Réussissez les leçons de votre grade et gagnez des combats pour vous présenter au shinsa.</p>`,
-    { '#bDojo': dojo, '#bTour': tournament, '#bShin': max ? home : shinsaIntro, '#bFree': free });
+    { '#bDojo': dojo, '#bTour': () => (window.tournoi ? tournoi.open() : tournament()), '#bShin': max ? home : shinsaIntro, '#bFree': free, '#bCust': () => window.custom && custom.open() });
 }
 
 // ================= DOJO =================
@@ -852,6 +853,6 @@ function shinsaResult(t, P, res) {
   render(html + '<div class="row2"><button class="hb main" id="bHome">Menu</button><button class="hb" id="bDojo">道場 Dojo</button></div>', { '#bHome': home, '#bDojo': dojo });
 }
 
-window.academy = { prof, L, home, dojo, startLesson, runDemo, runKiri, runKata, runReigi, tournament, shinsaIntro, shinsaPart, program, evaluate, ST, KATA };
+window.academy = { render, startMatch, scene, profileFor, STYLES, COLORS, KANJI, GRADES, addWin, save, LBL, fmt, prof, L, home, dojo, startLesson, runDemo, runKiri, runKata, runReigi, tournament, shinsaIntro, shinsaPart, program, evaluate, ST, KATA };
 home();
 })();
