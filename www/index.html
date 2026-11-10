@@ -70,9 +70,9 @@
 </svg>
 
 <div id="score">
-  <div class="side"><span class="chip" style="background:#fff"></span>Vous <span class="hans" id="hS"></span><span class="marks" id="mS"></span><span class="pts" id="pS">0</span></div>
+  <div class="side"><span class="chip" style="background:#fff"></span><b id="nS">Vous</b> <span class="hans" id="hS"></span><span class="marks" id="mS"></span><span class="pts" id="pS">0</span></div>
   <div id="timer">3:00</div>
-  <div class="side"><span class="pts" id="pA">0</span><span class="marks" id="mA"></span><span class="hans" id="hA"></span>IA <span class="chip" style="background:#e53935"></span></div>
+  <div class="side"><span class="pts" id="pA">0</span><span class="marks" id="mA"></span><span class="hans" id="hA"></span><b id="nA">IA</b> <span class="chip" style="background:#e53935"></span></div>
 </div>
 <div id="kiai"><div class="kb"><i id="kS"></i></div>気 KI<div class="kb r"><i id="kA"></i></div></div>
 <div id="msg"></div>
@@ -397,9 +397,9 @@ function ring(x) {
 
 // ================= JEU =================
 const LEVELS = [
-  { react: .2,  attack: .35, think: [1.0, 1.8], sloppy: .45, seme: .12, combo: .1, zanshin: .6,  flinch: .5,  push: 60 },
+  { novice: true, react: .2,  attack: .35, think: [1.0, 1.8], sloppy: .45, seme: .12, combo: .1, zanshin: .6,  flinch: .5,  push: 60 },
   { react: .45, attack: .55, think: [.7, 1.3],  sloppy: .25, seme: .22, combo: .3, zanshin: .8,  flinch: .32, push: 100 },
-  { react: .7,  attack: .75, think: [.45, .9],  sloppy: .1,  seme: .32, combo: .5, zanshin: .95, flinch: .18, push: 135 },
+  { dan: true, react: .7,  attack: .75, think: [.45, .9],  sloppy: .1,  seme: .32, combo: .5, zanshin: .95, flinch: .18, push: 135 },
 ];
 const LABEL = { men: 'MEN', kote: 'KOTE', do: 'DŌ', tsuki: 'TSUKI' };
 const MARK = { men: 'M', kote: 'K', do: 'D', tsuki: 'T' };
@@ -464,6 +464,7 @@ const game = {
     }
   },
   confirmIppon() {
+    if (window.hooks && hooks.ippon && hooks.ippon(this.z)) return;
     const { att, type, flags, name } = this.z, isP = att === player;
     (isP ? this.score.s : this.score.a).push(MARK[type]); updateScore();
     const won = this.score.s.length >= 2 || this.score.a.length >= 2;
@@ -527,6 +528,7 @@ const game = {
     const s = this.score.s.length, a = this.score.a.length;
     showMsg(s === a ? 'HIKIWAKE' : 'SHŌBU ARI', s > a ? 'Vous gagnez !' : a > s ? 'L\'IA gagne' : 'Match nul', 3);
     setTimeout(() => {
+      if (window.hooks && hooks.end && hooks.end(s, a)) return;
       $('menu').style.display = 'flex'; $('go').textContent = 'REJOUER';
       document.querySelector('#menu p').innerHTML = `<b>${s > a ? 'Victoire !' : a > s ? 'Défaite' : 'Égalité (hikiwake)'}</b> — ${s} à ${a}`;
     }, 2600);
@@ -541,8 +543,8 @@ const aiBrain = {
     if (ai.busy || game.tsuba || Math.random() >= L.react) return;
     setTimeout(() => {
       if (ai.busy || game.state !== 'fight') return;
-      if (game.level === 2 && type === 'men' && Math.random() < .3) { ai.strike('do'); return; }  // contre en dō
-      if (game.level > 0 && Math.random() < .25) { ai.strike('kote'); return; }                // debana-kote
+      if (L.dan && type === 'men' && Math.random() < .3) { ai.strike('do'); return; }  // contre en dō
+      if (!L.novice && Math.random() < .25) { ai.strike('kote'); return; }                // debana-kote
       ai.guarding = true; this.guardTimer = .6;
     }, 60 + Math.random() * 140);
   },
@@ -559,13 +561,14 @@ const aiBrain = {
   },
   update(dt) {
     if (game.state !== 'fight') { ai.vel = 0; return; }
+    if (window.hooks && hooks.ai && hooks.ai(dt)) return;
     const L = LEVELS[game.level];
     if (this.guardTimer > 0) { this.guardTimer -= dt; if (this.guardTimer <= 0) ai.guarding = false; }
     const d = Math.abs(ai.x - player.x);
     const a = ai.action;
     if (a && a.kind === 'strike' && !a.chained && !a.comboTried && a.t > .31) {
       a.comboTried = true;
-      if (a.fail && game.level > 0 && Math.random() < L.combo) ai.strike(a.type === 'kote' ? 'men' : Math.random() < .5 ? 'men' : 'do');
+      if (a.fail && !L.novice && Math.random() < L.combo) ai.strike(a.type === 'kote' ? 'men' : Math.random() < .5 ? 'men' : 'do');
     }
     if (this.sepT > 0) { this.sepT -= dt; ai.vel = ai.busy ? 0 : 260; return; }
     this.timer -= dt;
@@ -582,7 +585,7 @@ const aiBrain = {
       if (!ai.busy) {
         const r = Math.random();
         if (d > 470 && d < 590 && Math.random() < L.attack) {
-          ai.strike(player.guardT > .4 || player.openT > 0 ? 'do' : (game.level === 2 && r < .08) ? 'tsuki' : r < .5 ? 'men' : r < .85 ? 'kote' : 'do');
+          ai.strike(player.guardT > .4 || player.openT > 0 ? 'do' : (L.dan && r < .08) ? 'tsuki' : r < .5 ? 'men' : r < .85 ? 'kote' : 'do');
         } else if (d > 480 && d < 680 && Math.random() < L.seme) ai.seme();
         else this.want = Math.random() < .5 ? 500 + Math.random() * 60 : 600 + Math.random() * 120;
       }
@@ -685,5 +688,6 @@ function frame(now) {
 game.reset();
 requestAnimationFrame(frame);
 </script>
+<script src="modes.js"></script>
 </body>
 </html>
