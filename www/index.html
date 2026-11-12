@@ -464,13 +464,13 @@ const game = {
     if (def.guardT > .55 && !a.harai && (type === 'men' || type === 'kote')) { def.blockedAt = game.clock || 0; att.kiai = Math.max(0, att.kiai - 15); return fail(true, isP ? 'Bloqué par l\'adversaire' : 'Bien bloqué !'); }
     // ōji-waza : l'adversaire répond pendant notre attaque, au bon moment
     const ct = def.striking && !def.action.opts ? def.action.type : null;
-    if (ct && !def.action.hit && def.action.t > .04 && def.action.t < (ct === 'kote' ? .3 : .24) && ((type === 'men' && ct !== 'tsuki') || (type === 'kote' && ct === 'men'))) {
+    if (ct && !def.action.hit && def.action.t > 0 && def.action.t < (ct === 'kote' ? .34 : .32) && ((type === 'men' && ct !== 'tsuki') || (type === 'kote' && ct === 'men'))) {
       def.action.counterOf = type; def.action.counterT = def.action.t; return fail(true, isP ? 'Votre attaque a été contrée !' : 'Contre-attaque réussie…');
     }
     if (!a.counterOf && def.striking && def.action.t > .2 && def.action.t < .34) return fail(true, 'Ai-uchi — frappes simultanées');
     sfx.pop(); spark(tx, ty, true); def.recoil = 1;
     const OJI = { 'men>do': 'nuki-dō', 'men>men': 'suriage-men', 'men>kote': 'debana-kote', 'kote>men': 'kote-nuki-men' };
-    let oji = a.counterOf ? (a.counterOf === 'men' && type === 'men' ? (a.counterT >= .16 ? 'debana-men' : 'suriage-men') : OJI[`${a.counterOf}>${type}`] || 'ōji-waza') : '';
+    let oji = a.counterOf ? (a.counterOf === 'men' && type === 'men' ? (a.counterT >= .15 ? 'debana-men' : 'suriage-men') : OJI[`${a.counterOf}>${type}`] || 'ōji-waza') : '';
     if (!oji && kaeshi) oji = 'kaeshi-dō';
     if (!oji && def.striking && def.action.t < .16 && (type === 'men' || type === 'kote')) oji = `debana-${type}`;
     let q = a.counterOf || kaeshi ? .85 : 1 - Math.abs(d - IDEAL) / 120;
@@ -749,5 +749,6 @@ requestAnimationFrame(frame);
 <script src="tournoi.js"></script>
 <script src="custom.js"></script>
 <script src="ambiance.js"></script>
+<script src="reflex.js"></script>
 </body>
 </html>
