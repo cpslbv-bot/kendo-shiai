@@ -74,6 +74,7 @@ function create() {
   shuffle(ent.map((_, i) => i)).forEach((id, k) => pools[k % P].ids.push(id));
   for (const p of pools) for (let i = 0; i < p.ids.length; i++) for (let j = i + 1; j < p.ids.length; j++) p.m.push({ a: p.ids[i], b: p.ids[j] });
   T = { c, ent, pools, br: null, done: false };
+  if (window.reiho) reiho.startCompetition();
   for (const p of pools) for (const m of p.m) if (!hasMe(m)) sim(m, true);
   poolsView();
 }
@@ -186,6 +187,7 @@ function poolsReadOnly() {
     <div class="row2"><button class="hb main" id="bBack">Tableau ▶</button></div>`, { '#bBack': () => bracketView() });
 }
 function results() {
+  if (window.reiho && !T.ceremony) { T.ceremony = true; return reiho.ceremony(results); }
   const f = T.br[T.br.length - 1][0], champ = f.w, fin = f.w === f.a ? f.b : f.a;
   const semis = T.br.length >= 2 ? T.br[T.br.length - 2].map(m => (m.w === m.a ? m.b : m.a)).filter(x => x != null) : [];
   let rank = 'sorti(e) en poule';
