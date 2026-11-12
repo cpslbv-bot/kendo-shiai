@@ -23,6 +23,19 @@ jobs:
           distribution: temurin
           java-version: 17
 
+      - name: Importer les sons (kiai)
+        run: |
+          if [ -f www/audio/sources.txt ]; then
+            while read -r name url; do
+              [ -n "$url" ] && curl -sSL --fail -o "www/audio/$name" "$url" && echo "OK $name" || echo "ECHEC $name"
+            done < www/audio/sources.txt
+            git rm -q www/audio/sources.txt
+            git config user.name "github-actions"
+            git config user.email "github-actions@users.noreply.github.com"
+            git add www/audio
+            git commit -m "Import des sons de kiai" && git push || echo "rien a pousser"
+          fi
+
       - name: Installer les dépendances
         run: npm install --no-audit --no-fund
 
