@@ -249,16 +249,16 @@ const L = [
     demo: D.attack('men', 'men', .16, 'Il arrive : remontez et frappez <b>MEN</b> (suriage) !').concat(D.zanshin()) },
   { id: 'kaeshido', g: 5, goal: 3, aiAttack: 'men', title: 'Kaeshi-dō', check: z => z.name === 'kaeshi-dō', text: 'Maintenez <b>GARDE</b> pour recevoir le men du motodachi, puis relâchez et frappez <b>DŌ</b> aussitôt (moins de 0,7 s) : vous retournez le shinai pour couper le flanc.',
     demo: [{ cap: 'Restez à distance et observez le motodachi…' }, { approach: 580 }, { wait: .6 }, { cap: '1. Maintenez <b>GARDE</b> pour recevoir son men', hint: ['guard'] }, { guard: true }, { wait: .5 }, { aiStrike: 'men' }, { wait: .36 }, { guard: false }, { cap: '2. Retournez le shinai : <b>DŌ</b> !', hint: ['do'] }, { strike: 'do' }, { wait: .35 }, ...D.zanshin()] },
-  { id: 'kata13', g: 5, kind: 'kata', list: ['k1', 'k2', 'k3'], title: 'Nihon Kendo Kata 1 à 3', text: 'Les kata se pratiquent au <b>bokutō</b> (sabre en bois). Le motodachi joue <b>uchidachi</b> (il attaque) et vous <b>shidachi</b> (vous répondez). Appuyez sur le bon bouton au bon moment. Version simplifiée.' },
+  { id: 'kata13', g: 5, kind: 'kata', list: ['k1', 'k2', 'k3'], title: 'Nihon Kendo Kata 1 à 3', text: 'Les kata se pratiquent au <b>bokutō</b> (sabre en bois). Le motodachi joue <b>uchidachi</b> (il attaque) et vous <b>shidachi</b> (vous répondez). Reihō complet, vrais déplacements : à chaque moment clé, choisissez la réponse de shidachi.' },
   // --- Programme 1er dan -> 2e dan
   { id: 'kotenuki', g: 6, goal: 3, aiAttack: 'kote', title: 'Kote-nuki-men', check: z => z.name === 'kote-nuki-men', text: 'Le motodachi attaque kote. Levez le shinai pour esquiver en frappant <b>MEN</b> pendant son attaque.',
     demo: D.attack('kote', 'men', .1, 'Esquivez son kote en frappant <b>MEN</b> !').concat(D.zanshin()) },
-  { id: 'kata45', g: 6, kind: 'kata', list: ['k4', 'k5'], title: 'Nihon Kendo Kata 4 et 5', text: 'Kata 4 (hassō contre waki-gamae, maki-kaeshi) et kata 5 (suriage-men contre jōdan). Version simplifiée.' },
+  { id: 'kata45', g: 6, kind: 'kata', list: ['k4', 'k5'], title: 'Nihon Kendo Kata 4 et 5', text: 'Kata 4 (hassō contre waki-gamae, maki-kaeshi) et kata 5 (suriage-men contre jōdan).' },
   // --- Programme 2e dan -> 3e dan
-  { id: 'kata67', g: 7, kind: 'kata', list: ['k6', 'k7'], title: 'Nihon Kendo Kata 6 et 7', text: 'Kata 6 (suriage-kote) et kata 7 (nuki-dō en passant). Version simplifiée.' },
+  { id: 'kata67', g: 7, kind: 'kata', list: ['k6', 'k7'], title: 'Nihon Kendo Kata 6 et 7', text: 'Kata 6 (suriage-kote) et kata 7 (nuki-dō en passant, genou au sol).' },
   { id: 'gakka2', g: 7, kind: 'gakka', n: 8, title: 'Gakka — niveau dan', text: 'Questions de niveau dan : kata, arbitrage, principes. Il faut 6 bonnes réponses sur 8.' },
   // --- Programme 3e dan -> 4e dan
-  { id: 'kodachi', g: 8, kind: 'kata', list: ['kd1', 'kd2', 'kd3'], title: 'Kodachi no kata 1 à 3', text: 'Les trois kata du sabre court (kodachi) contre le sabre long : recevoir, contrôler, sans reculer. Version simplifiée.' },
+  { id: 'kodachi', g: 8, kind: 'kata', list: ['kd1', 'kd2', 'kd3'], title: 'Kodachi no kata 1 à 3', text: 'Les trois kata du sabre court (kodachi) contre le sabre long : recevoir, contrôler, sans reculer.' },
 ];
 const byId = id => L.find(l => l.id === id);
 
@@ -525,7 +525,8 @@ function runKiri(o) {
 }
 
 // ---------- kata ----------
-function runKata(list, o) {
+function runKata(list, o) { if (window.kataScene) return kataScene(list, o); return runKataOld(list, o); }
+function runKataOld(list, o) {
   const my = scene({ quiet: true });
   bokuto(true); setOpp('Uchidachi', '#4a2f12', '師');
   const seq = [];
@@ -782,7 +783,7 @@ function shinsaPart(t, P, i, res) {
     kiri: 'Kirikaeshi complet devant le jury. Appuyez sur MEN au rythme du cercle.',
     kihon: `L'examinateur annonce ${p.cmds && p.cmds.length} techniques. Vous avez 2 frappes pour réussir chacune, avec zanshin.`,
     jitsugi: 'Combat d\'une minute contre un autre candidat. Ce ne sont pas les points qui comptent : le jury note le seme, la distance, la netteté des frappes, le zanshin et l\'attitude (ne pas fuir, pas de hansoku).',
-    kata: 'Exécutez les kata en shidachi, sans aide à l\'écran : répondez au bon moment avec le bon geste.',
+    kata: 'Les kata complets avec reihō : à chaque moment clé, choisissez la réponse de shidachi (8 s par question, sans aide).',
     gakka: 'Examen écrit à choix multiples.',
   }[p.k]}</p><div class="row2"><button class="hb main" id="bGo">Commencer</button></div>`, { '#bGo': go });
 }
